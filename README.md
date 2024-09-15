@@ -1,5 +1,4 @@
 ## How to contribute
----
 1. Clone the repo.
 2. Install app.
 3. Create a new branch.
@@ -7,7 +6,6 @@
 5. Submit pulls request with clear description of changes.
 
 ## How to install
----
 ### 1. Install Python `venv` Module and Activate
 
 1. Ensure Python is installed on your system.
@@ -31,7 +29,7 @@
       venv\Scripts\activate
       ```
 
-   - [!] Create virtual env outside webapp directory or add filename to .gitgnore
+   ⚠️ Create virtual env outside webapp directory or add filename to .gitgnore
 
 ### 2. Install Python Libraries from `requirements.txt`
 
@@ -49,4 +47,3 @@ python app.py
 Now feel free and dev ur suck app.
 
 ## Acknowledgements
----
