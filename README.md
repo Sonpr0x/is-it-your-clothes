@@ -1,7 +1,13 @@
-# Project Name
+## How to contribute
+---
+1. Clone the repo.
+2. Install app.
+3. Create a new branch.
+4. Make changes and test.
+5. Submit pulls request with clear description of changes.
 
-## Guide to Set Up and Run the Flask App
-
+## How to install
+---
 ### 1. Install Python `venv` Module and Activate
 
 1. Ensure Python is installed on your system.
@@ -42,3 +48,5 @@ python app.py
 
 Now feel free and dev ur suck app.
 
+## Acknowledgements
+---
