@@ -6,7 +6,7 @@
 5. Submit pulls request with clear description of changes.
 
 ## How to install
-### 1. Install Python `venv` Module and Activate
+### 1. Install Python `venv` module
 
 1. Ensure Python is installed on your system.
 2. Run the following command to create a virtual environment:
@@ -31,7 +31,7 @@
 
    ⚠️ Create virtual env outside webapp directory or add filename to .gitgnore
 
-### 2. Install Python Libraries from `requirements.txt`
+### 2. Install libraries
 
 Run the following command to install the required dependencies:
 
@@ -44,6 +44,6 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Now feel free and dev ur suck app.
+Default host on http://localhost:5000
 
 ## Acknowledgements

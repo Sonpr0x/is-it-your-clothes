@@ -2,6 +2,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from app.config import Config
 import os
+from gradio_client import Client, handle_file
+
 
 
 # db = SQLAlchemy()
