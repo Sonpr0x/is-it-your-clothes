@@ -1,6 +1,7 @@
+# This module hold init config.
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from app.config import Config
 import os
 from gradio_client import Client, handle_file
 
@@ -14,7 +15,8 @@ from gradio_client import Client, handle_file
 #     SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://cloth_project:trycatch@localhost/cloth_project'
 #     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-# init
+
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
