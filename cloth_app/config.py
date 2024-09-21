@@ -1,6 +1,6 @@
 import os
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'a_really_secret_key'
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://cloth_project:trycatch@localhost/cloth_project'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SQLALCHEMY_DATABASE_URI = 'mysql://cloth_project:trycatch@localhost/myappdb'
     SQLALCHEMY_TRACK_MODIFICATIONS = False

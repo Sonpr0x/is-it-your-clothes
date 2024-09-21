@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Upload</title>
+</head>
+<body>
+    <h2>Upload Images</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <label>Person Image:</label>
+        <input type="file" name="person_image" required>
+        <label>Cloth Image:</label>
+        <input type="file" name="cloth_image" required>
+        <button type="submit">Upload</button>
+    </form>
+    
+    <h3>Uploaded Images</h3>
+    <div>
+        {% for image in images %}
+            <div>
+                <p>Type: {{ image.image_type }}</p>
+                <img src="{{ url_for('get_image', image_id=image.id) }}" alt="Uploaded Image" style="width:100px;">
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

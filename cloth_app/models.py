@@ -1,24 +1,14 @@
-def Upload_person():
-    client = Client("zhengchong/CatVTON")
-    result = client.predict(
-		image_path=handle_file('https://raw.githubusercontent.com/gradio-app/gradio/main/test/test_files/bus.png'),
-		api_name="/person_example_fn"
-)
-    return result
+from app import db
+from flask_login import UserMixin
 
-def Upload_cloth():
-    #return local filepath
+class User(UserMixin, db.Model): 
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+    images = db.relationship('Image', backref='user', lazy=True)
 
-def Process():
-    result = client.predict(
-		person_image={"background":handle_file('https://raw.githubusercontent.com/gradio-app/gradio/main/test/test_files/bus.png'),"layers":[],"composite":None},
-		cloth_image=handle_file('https://raw.githubusercontent.com/gradio-app/gradio/main/test/test_files/bus.png'),
-		cloth_type="upper",
-		num_inference_steps=50,
-		guidance_scale=2.5,
-		seed=42,
-		show_type="input & mask & result",
-		api_name="/submit_function"
-    )
-
-    return result
+class Image(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    image_type = db.Column(db.String(50), nullable=False)  # person/cloth
+    image_path = db.Column(db.String(300), nullable=False)
