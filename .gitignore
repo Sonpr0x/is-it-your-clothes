@@ -1,1 +1,3 @@
-cloth_app/config.py
+/cloth_app/config.py
+/cloth_app/__pycache__
+/cloth_app/uploads/*
