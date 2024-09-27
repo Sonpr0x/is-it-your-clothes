@@ -1,26 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Image Upload</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Outfit Creator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="index.css" rel="stylesheet">
+
 </head>
 <body>
-    <h2>Upload Images</h2>
-    <form method="POST" enctype="multipart/form-data">
-        <label>Person Image:</label>
-        <input type="file" name="person_image" required>
-        <label>Cloth Image:</label>
-        <input type="file" name="cloth_image" required>
-        <button type="submit">Upload</button>
-    </form>
-    
-    <h3>Uploaded Images</h3>
-    <div>
-        {% for image in images %}
-            <div>
-                <p>Type: {{ image.image_type }}</p>
-                <img src="{{ url_for('get_image', image_id=image.id) }}" alt="Uploaded Image" style="width:100px;">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Virtual Outfit Creator</a>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8">
+                <h2 class="mb-4">Clothing Showcase</h2>
+                <ul class="nav nav-tabs" id="clothingTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="clothes-tab" data-bs-toggle="tab" data-bs-target="#clothes" type="button" role="tab" aria-controls="clothes" aria-selected="true">Overall</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pants-tab" data-bs-toggle="tab" data-bs-target="#pants" type="button" role="tab" aria-controls="pants" aria-selected="false">Upper</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="suits-tab" data-bs-toggle="tab" data-bs-target="#suits" type="button" role="tab" aria-controls="suits" aria-selected="false">Lower</button>
+                    </li>
+                </ul>
+                <div class="tab-content mt-3" id="clothingTabsContent">
+                    <div class="tab-pane fade show active" id="clothes" role="tabpanel" aria-labelledby="clothes-tab">
+                        <div class="row">
+                            {% for image in images %}
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top">
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="pants" role="tabpanel" aria-labelledby="pants-tab">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246" class="card-img-top" alt="Jeans">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1" class="card-img-top" alt="Chinos">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="suits" role="tabpanel" aria-labelledby="suits-tab">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <img src="https://images.unsplash.com/photo-1593030761757-71fae45fa0e7" class="card-img-top" alt="Business Suit">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf" class="card-img-top" alt="Casual Blazer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        {% endfor %}
+
+            <!-- Updated form to upload and submit images and options -->
+            <div class="col-md-4">
+                <h2 class="mb-4">Virtual Try-On</h2>
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="person_image" class="form-label">Upload Your Image</label>
+                        <input class="form-control" type="file" name="person_image" id="person_image" accept="image/*" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cloth_image" class="form-label">Upload Clothing Image</label>
+                        <input class="form-control" type="file" name="cloth_image" id="cloth_image" accept="image/*" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Try-On Options</label>
+                        <div class="btn-group d-flex" role="group">
+                            <input type="radio" class="btn-check" name="try_on_option" id="upperOption" value="upper" autocomplete="off" checked>
+                            <label class="btn btn-outline-primary" for="upperOption">Upper</label>
+                            <input type="radio" class="btn-check" name="try_on_option" id="lowerOption" value="lower" autocomplete="off">
+                            <label class="btn btn-outline-primary" for="lowerOption">Lower</label>
+                            <input type="radio" class="btn-check" name="try_on_option" id="overallOption" value="overall" autocomplete="off">
+                            <label class="btn btn-outline-primary" for="overallOption">Overall</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Generate Virtual Outfit</button>
+                </form>
+
+                <div class="mt-4" id="resultContainer">
+                    <h3>Result</h3>
+                    <img src="" id="resultImage" class="img-fluid d-none" alt="Virtual Outfit Result">
+                </div>
+            </div>
+        </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
