@@ -34,42 +34,40 @@
                     <div class="tab-pane fade show active" id="clothes" role="tabpanel" aria-labelledby="clothes-tab">
                         <div class="row">
                             {% for image in images %}
-			    {% if image.image_type == 'overall' %}
+			                {% if image.image_type == 'overall' %}
                             <div class="col-md-4 mb-3">
                                 <div class="card">
                                     <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top">
                                 </div>
                             </div>
-			    {% endif %}
+			                {% endif %}
                             {% endfor %}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="pants" role="tabpanel" aria-labelledby="pants-tab">
                         <div class="row">
+                            {% for image in images %}
+			                {% if image.image_type == 'upper' %}
                             <div class="col-md-4 mb-3">
                                 <div class="card">
-                                    <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246" class="card-img-top" alt="Jeans">
+                                    <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top">
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="card">
-                                    <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1" class="card-img-top" alt="Chinos">
-                                </div>
-                            </div>
+			                {% endif %}
+                            {% endfor %}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="suits" role="tabpanel" aria-labelledby="suits-tab">
                         <div class="row">
+                            {% for image in images %}
+			                {% if image.image_type == 'lower' %}
                             <div class="col-md-4 mb-3">
                                 <div class="card">
-                                    <img src="https://images.unsplash.com/photo-1593030761757-71fae45fa0e7" class="card-img-top" alt="Business Suit">
+                                    <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top">
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="card">
-                                    <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf" class="card-img-top" alt="Casual Blazer">
-                                </div>
-                            </div>
+			                {% endif %}
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
