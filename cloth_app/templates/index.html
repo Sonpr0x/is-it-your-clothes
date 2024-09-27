@@ -34,11 +34,13 @@
                     <div class="tab-pane fade show active" id="clothes" role="tabpanel" aria-labelledby="clothes-tab">
                         <div class="row">
                             {% for image in images %}
+			    {% if image.image_type == 'overall' %}
                             <div class="col-md-4 mb-3">
                                 <div class="card">
                                     <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top">
                                 </div>
                             </div>
+			    {% endif %}
                             {% endfor %}
                         </div>
                     </div>

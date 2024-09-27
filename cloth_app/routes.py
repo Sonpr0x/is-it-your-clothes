@@ -79,7 +79,7 @@ def main():
 
             # Save metadata (path) to the database
             person_image_record = Image(user_id=current_user.id, image_type='person', image_path=person_image_path)
-            cloth_image_record = Image(user_id=current_user.id, image_type='cloth', image_path=cloth_image_path)
+            cloth_image_record = Image(user_id=current_user.id, image_type=try_on_option, image_path=cloth_image_path)
 
             db.session.add(person_image_record)
             db.session.add(cloth_image_record)
