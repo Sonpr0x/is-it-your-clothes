@@ -47,7 +47,7 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
             login_user(user)
-            return redirect(url_for('app'))
+            return redirect(url_for('main'))
         flash('Invalid login credentials!')
     return render_template('login.html')
 
@@ -62,7 +62,7 @@ def logout():
 # Main
 @app.route('/app', methods=['GET', 'POST'])
 @login_required
-def app():
+def main():
 
     # Process images
     if request.method == 'POST':
