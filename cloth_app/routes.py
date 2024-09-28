@@ -96,9 +96,18 @@ def main():
 		        api_name="/person_example_fn"
             )
 
+            data_bg = handle_file(person['background'])
+
+            new_person_dict = {
+                'background': data_bg,
+                'layers': [data_bg],
+                'composite': data_bg,
+		'id' : person['id']
+            }
+
             result = client.predict(
-		        person_image=person,
-		        cloth_image=cloth_image_path,
+		        person_image=new_person_dict,
+		        cloth_image=handle_file(cloth_image_path),
 		        cloth_type=try_on_option,
 		        num_inference_steps=50,
 		        guidance_scale=2.5,
@@ -107,13 +116,14 @@ def main():
 		        api_name="/submit_function"
             )
 
+
             return send_file(result, mimetype='image/jpeg')
 
 
     # Load images of user
     uploaded_images = Image.query.filter_by(user_id=current_user.id).all()
 
-    return render_template('index.html', images=uploaded_images, result=result)
+    return render_template('index.html', images=uploaded_images)
 
 
 
