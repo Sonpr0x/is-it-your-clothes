@@ -1,7 +1,9 @@
 from flask import render_template, redirect, url_for, request, flash, send_file, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
-from app import app, db, login_manager, client
+from app import app, db, login_manager
+from models import User, Image
+from gradio_client import Client, handle_file
 import os, uuid
 
 
@@ -72,6 +74,7 @@ def main():
         # Check if the files have valid names and extensions
         if cloth_image and allowed_file(cloth_image.filename) and person_image and allowed_file(person_image.filename):
             
+            
             # Save the images to local storage
             person_image_path = save_image(person_image, 'person')
             cloth_image_path = save_image(cloth_image, 'cloth', try_on_option)
@@ -85,10 +88,33 @@ def main():
             db.session.commit()
             flash('Images uploaded successfully!')
 
+            # Init api
+            client = Client("zhengchong/CatVTON")
+
+            person = client.predict(
+		        image_path=handle_file(person_image_path),
+		        api_name="/person_example_fn"
+            )
+
+            result = client.predict(
+		        person_image=person,
+		        cloth_image=cloth_image_path,
+		        cloth_type=try_on_option,
+		        num_inference_steps=50,
+		        guidance_scale=2.5,
+		        seed=42,
+		        show_type="result only",
+		        api_name="/submit_function"
+            )
+
+            return send_file(result, mimetype='image/jpeg')
+
+
     # Load images of user
     uploaded_images = Image.query.filter_by(user_id=current_user.id).all()
 
-    return render_template('index.html', images=uploaded_images)
+    return render_template('index.html', images=uploaded_images, result=result)
+
 
 
 # Get image api
