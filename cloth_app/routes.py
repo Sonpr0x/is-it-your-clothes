@@ -14,7 +14,7 @@ def load_user(user_id):
 
 
 # Route root to login page
-@app.route('/login')
+@app.route('/')
 def root():
     return redirect(url_for('login'))
 
