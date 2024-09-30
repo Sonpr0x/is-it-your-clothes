@@ -101,11 +101,13 @@
                 <form method="POST" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="person_image" class="form-label">Upload Your Image</label>
-                        <input class="form-control" type="file" name="person_image" id="person_image" accept="image/*" required>
+                        <input class="form-control" type="file" name="person_image" id="person_image" accept="image/*">
+                        <input type="hidden" id="person_image_path" name="person_image_path">
                     </div>
                     <div class="mb-3">
                         <label for="cloth_image" class="form-label">Upload Clothing Image</label>
-                        <input class="form-control" type="file" name="cloth_image" id="cloth_image" accept="image/*" required>
+                        <input class="form-control" type="file" name="cloth_image" id="cloth_image" accept="image/*">
+                        <input type="hidden" id="cloth_image_path" name="cloth_image_path">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Try-On Options</label>
@@ -170,9 +172,9 @@
                     .then((response) => response.json())
                     .then((data) => {
                         if (data.person_image_path) {
-                            document.getElementById('person_image').value = data.person_image_path;
+                            document.getElementById('person_image_path').value = data.person_image_path;
                         } else if (data.cloth_image_path) {
-                            document.getElementById('cloth_image').value = data.cloth_image_path;
+                            document.getElementById('cloth_image_path').value = data.cloth_image_path;
                         }
                     })
                     .catch((error) => console.error('Error:', error));
