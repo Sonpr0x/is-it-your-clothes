@@ -156,7 +156,6 @@
         });
     </script>
     <script>
-        // Add an event listener to each image in the gallery
         document.querySelectorAll('.card img').forEach((img) => {
             img.addEventListener('click', (event) => {
                 const imageId = event.target.dataset.imageId;
@@ -170,18 +169,10 @@
                     })
                     .then((response) => response.json())
                     .then((data) => {
-                        const filePath = data.file_path;
-                        const fileType = filePath.split('/').slice(-2, -1)[0];
-                        if (fileType === 'person') {
-                            document.getElementById('person_image').value = filePath;
-                            document.getElementById('person-image-path').innerText = filePath.split('/').pop();
-                            document.getElementById('person_image').classList.add('active-input');
-                            document.getElementById('cloth_image').classList.remove('active-input');
-                        } else if (fileType === 'cloth') {
-                            document.getElementById('cloth_image').value = filePath;
-                            document.getElementById('cloth-image-path').innerText = filePath.split('/').pop();
-                            document.getElementById('cloth_image').classList.add('active-input');
-                            document.getElementById('person_image').classList.remove('active-input');
+                        if (data.person_image_path) {
+                            document.getElementById('person_image').value = data.person_image_path;
+                        } else if (data.cloth_image_path) {
+                            document.getElementById('cloth_image').value = data.cloth_image_path;
                         }
                     })
                     .catch((error) => console.error('Error:', error));
@@ -189,12 +180,6 @@
             });
         });
     </script>
-    
-    <style>
-        .active-input {
-            border: 2px solid #007bff;
-        }
-    </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
