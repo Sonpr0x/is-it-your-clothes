@@ -148,11 +148,12 @@ def main():
 @app.route('/image/<int:image_id>')
 @login_required
 def get_image(image_id):
+    # Query img
+    image = Image.query.get_or_404(image_id)
+
     # Block unauthorized
     if image.user_id != current_user.id:
         abort(403)
-
-    image = Image.query.get_or_404(image_id)
 
     try:
         return send_file(image.image_path)  # Serve the image from its path
@@ -164,13 +165,13 @@ def get_image(image_id):
 @login_required
 def image_click():
 
+    # Query img
+    image_id = request.json['image_id']
+    image = Image.query.get_or_404(image_id)
+
     # Block unauthorized
     if image.user_id != current_user.id:
         abort(403)
-
-    # Check img exist
-    image_id = request.json['image_id']
-    image = Image.query.get_or_404(image_id)
 
     # Check if the image is a person or cloth image
     if image.image_type == 'person':
