@@ -26,8 +26,11 @@
             <div class="col-md-8">
                 <h2 class="mb-4">Clothing Showcase</h2>
                 <ul class="nav nav-tabs" id="clothingTabs" role="tablist">
+                    <li class="nav-item" role="presentation"></li>
+                        <button class="nav-link" id="person-tab" data-bs-toggle="tab" data-bs-target="#person" type="button" role="tab" aria-controls="person" aria-selected="true">Person</button>
+                    </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="clothes-tab" data-bs-toggle="tab" data-bs-target="#clothes" type="button" role="tab" aria-controls="clothes" aria-selected="true">Overall</button>
+                        <button class="nav-link active" id="clothes-tab" data-bs-toggle="tab" data-bs-target="#clothes" type="button" role="tab" aria-controls="clothes" aria-selected="false">Overall</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pants-tab" data-bs-toggle="tab" data-bs-target="#pants" type="button" role="tab" aria-controls="pants" aria-selected="false">Upper</button>
@@ -37,7 +40,7 @@
                     </li>
                 </ul>
                 <div class="tab-content mt-3" id="clothingTabsContent">
-                    <div class="tab-pane fade" id="person" role="tabpanel" aria-labelledby="person-tab">
+                    <div class="tab-pane fade show active" id="person" role="tabpanel" aria-labelledby="person-tab">
                         <div class="row">
                             {% for image in images %}
                             {% if image.image_type == 'person' %}
