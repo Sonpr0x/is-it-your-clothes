@@ -3,4 +3,5 @@ Flask-SQLAlchemy
 Flask-Login
 Werkzeug
 uuid
+Pillow
 #PyMySQL==1.0.2
