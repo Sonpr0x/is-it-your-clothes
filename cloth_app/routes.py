@@ -103,18 +103,19 @@ def main():
             input_image = Image_process.open(person_image_path)
             layer0 = Image_process.new("L", input_image.size, color=0)
 
-            mask_folder = os.path.join('uploads', str(current_user.id))
-            layer0.save(mask_folder, "temp_mask.png")
+            mask_folder = os.path.join('uploads', str(current_user.id), "temp_mask.png")
+            layer0.save(mask_folder)
 
-            layer0 = mask_folder + "/" + "temp_mask.png"
-
+            # Create new dict
 
             new_person_dict = {
                 'background': data_bg,
-                'layers': [layer0],
+                'layers': [handle_file(mask_folder)],
                 'composite': data_bg,
 		        'id' : person['id']
             }
+
+            # Call api
 
             result = client.predict(
 		        person_image=new_person_dict,
