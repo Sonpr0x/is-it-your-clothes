@@ -72,8 +72,14 @@ def main():
 
     # Process images
     if request.method == 'POST':
+
+        # img data
         person_image = request.files['person_image']
         cloth_image = request.files['cloth_image']
+
+        # img path
+        person_image_path = request.form.get('person_image_path')
+        cloth_image_path = request.form.get('cloth_image_path')
         try_on_option = request.form.get('try_on_option')
 
         # Check if the files have valid names and extensions
@@ -93,46 +99,13 @@ def main():
             db.session.commit()
             flash('Images uploaded successfully!')
 
-            # Init api
-            client = Client("zhengchong/CatVTON")
+            image_process(person_image_path, cloth_image_path, try_on_option)
 
-            person = client.predict(
-		        image_path=handle_file(person_image_path),
-		        api_name="/person_example_fn"
-            )
+            return send_file(result, mimetype='image/jpeg')
 
-            # background img
-            data_bg = handle_file(person['background'])
-
-            # Create mask
-            input_image = Image_process.open(person_image_path)
-            layer0 = Image_process.new("L", input_image.size, color=0)
-
-            mask_folder = os.path.join('uploads', str(current_user.id), "temp_mask.png")
-            layer0.save(mask_folder)
-
-            # Create new dict
-
-            new_person_dict = {
-                'background': data_bg,
-                'layers': [handle_file(mask_folder)],
-                'composite': data_bg,
-		        'id' : person['id']
-            }
-
-            # Call api
-
-            result = client.predict(
-		        person_image=new_person_dict,
-		        cloth_image=handle_file(cloth_image_path),
-		        cloth_type=try_on_option,
-		        num_inference_steps=50,
-		        guidance_scale=2.5,
-		        seed=42,
-		        show_type="result only",
-		        api_name="/submit_function"
-            )
-
+        elif person_image_path and cloth_image_path:
+            
+            image_process(person_image_path, cloth_image_path, try_on_option)
 
             return send_file(result, mimetype='image/jpeg')
 
@@ -141,7 +114,6 @@ def main():
     uploaded_images = Image.query.filter_by(user_id=current_user.id).all()
 
     return render_template('index.html', images=uploaded_images)
-
 
 
 # Get image api
@@ -210,3 +182,46 @@ def save_image(image, image_type, try_on_option=None):
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def image_process(person_image_path, cloth_image_path, try_on_option):
+     # Init api
+        client = Client("zhengchong/CatVTON")
+
+        person = client.predict(
+            image_path=handle_file(person_image_path),
+            api_name="/person_example_fn"
+        )
+
+        # background img
+        data_bg = handle_file(person['background'])
+
+        # Create mask
+        input_image = Image_process.open(person_image_path)
+        layer0 = Image_process.new("L", input_image.size, color=0)
+
+        mask_folder = os.path.join('uploads', str(current_user.id), "temp_mask.png")
+        layer0.save(mask_folder)
+
+        # Create new dict
+
+        new_person_dict = {
+            'background': data_bg,
+            'layers': [handle_file(mask_folder)],
+            'composite': data_bg,
+            'id' : person['id']
+        }
+
+        # Call api
+
+        result = client.predict(
+            person_image=new_person_dict,
+            cloth_image=handle_file(cloth_image_path),
+            cloth_type=try_on_option,
+            num_inference_steps=50,
+            guidance_scale=2.5,
+            seed=42,
+            show_type="result only",
+            api_name="/submit_function"
+        )
+
+        return result
