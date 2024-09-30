@@ -98,16 +98,18 @@
             <!-- Updated form to upload and submit images and options -->
             <div class="col-md-4">
                 <h2 class="mb-4">Virtual Try-On</h2>
-                <form method="POST" enctype="multipart/form-data">
+                <form id="imageForm" method="POST" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="person_image" class="form-label">Upload Your Image</label>
                         <input class="form-control" type="file" name="person_image" id="person_image" accept="image/*">
                         <input type="hidden" id="person_image_path" name="person_image_path">
+                        <img id="person_image_preview" class="img-fluid mt-2 d-none" alt="Person Image Preview">
                     </div>
                     <div class="mb-3">
                         <label for="cloth_image" class="form-label">Upload Clothing Image</label>
                         <input class="form-control" type="file" name="cloth_image" id="cloth_image" accept="image/*">
                         <input type="hidden" id="cloth_image_path" name="cloth_image_path">
+                        <img id="cloth_image_preview" class="img-fluid mt-2 d-none" alt="Clothing Image Preview">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Try-On Options</label>
@@ -122,7 +124,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Generate Virtual Outfit</button>
                 </form>
-
+            
                 <div class="mt-4" id="resultContainer">
                     <h3>Result</h3>
                     <img src="" id="resultImage" class="img-fluid d-none" alt="Virtual Outfit Result">
@@ -162,7 +164,7 @@
             }
         });
     </script>
-    
+
     <script>
         document.getElementById('person_image').addEventListener('change', function(event) {
             const file = event.target.files[0];
