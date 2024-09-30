@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, request, flash, send_file, abort
+from flask import render_template, redirect, url_for, request, flash, send_file, abort, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager
@@ -12,6 +12,11 @@ from PIL import Image as Image_process
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
+# Route root to login page
+@app.route('/login')
+def root():
+    return redirect(url_for('login'))
 
 # Register
 @app.route('/register', methods=['GET', 'POST'])
@@ -143,16 +148,37 @@ def main():
 @app.route('/image/<int:image_id>')
 @login_required
 def get_image(image_id):
-    image = Image.query.get_or_404(image_id)
-
     # Block unauthorized
     if image.user_id != current_user.id:
         abort(403)
+
+    image = Image.query.get_or_404(image_id)
 
     try:
         return send_file(image.image_path)  # Serve the image from its path
     except FileNotFoundError:
         abort(404)
+
+# Reuse image from gallery
+@app.route('/image/click', methods=['POST'])
+@login_required
+def image_click():
+
+    # Block unauthorized
+    if image.user_id != current_user.id:
+        abort(403)
+
+    # Check img exist
+    image_id = request.json['image_id']
+    image = Image.query.get_or_404(image_id)
+
+    # Check if the image is a person or cloth image
+    if image.image_type == 'person':
+        return jsonify({'person_image_path': image.image_path})
+    elif image.image_type in ['upper', 'lower', 'overall']:
+        return jsonify({'cloth_image_path': image.image_path})
+    else:
+        return jsonify({}), 400
 
 
 ### Addtional functions
