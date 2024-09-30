@@ -139,6 +139,10 @@
     
             let formData = new FormData(this);  // Get the form data
     
+            // Add the hidden input fields to the form data
+            formData.append('person_image_path', document.getElementById('person_image_path').value);
+            formData.append('cloth_image_path', document.getElementById('cloth_image_path').value);
+    
             // Send the form data asynchronously
             let response = await fetch('/app', {
                 method: 'POST',
@@ -152,6 +156,7 @@
     
                 // Set the image source to the URL created from the blob
                 document.getElementById('resultImage').src = imageUrl;
+                document.getElementById('resultImage').classList.remove('d-none');
             } else {
                 console.error('Failed to upload and process image');
             }

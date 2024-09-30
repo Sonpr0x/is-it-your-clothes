@@ -99,13 +99,13 @@ def main():
             db.session.commit()
             flash('Images uploaded successfully!')
 
-            image_process(person_image_path, cloth_image_path, try_on_option)
+            result = image_process(person_image_path, cloth_image_path, try_on_option)
 
             return send_file(result, mimetype='image/jpeg')
 
         elif person_image_path and cloth_image_path:
-            
-            image_process(person_image_path, cloth_image_path, try_on_option)
+
+            result = image_process(person_image_path, cloth_image_path, try_on_option)
 
             return send_file(result, mimetype='image/jpeg')
 
