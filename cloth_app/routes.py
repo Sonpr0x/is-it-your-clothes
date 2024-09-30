@@ -96,9 +96,17 @@ def main():
 		        api_name="/person_example_fn"
             )
 
+            # background img
             data_bg = handle_file(person['background'])
+
+            # Create mask
             input_image = Image_process.open(person_image_path)
             layer0 = Image_process.new("L", input_image.size, color=0)
+
+            mask_folder = os.path.join('uploads', str(current_user.id))
+            layer0.save(mask_folder, "temp_mask.png")
+
+            layer0 = mask_folder + "/" + "temp_mask.png"
 
 
             new_person_dict = {
