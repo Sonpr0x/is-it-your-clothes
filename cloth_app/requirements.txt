@@ -5,4 +5,5 @@ Werkzeug
 uuid
 Pillow
 jsonfy
-#PyMySQL==1.0.2
+mysqlclient
+gradio_client
