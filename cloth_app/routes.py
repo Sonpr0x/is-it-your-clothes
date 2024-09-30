@@ -97,12 +97,15 @@ def main():
             )
 
             data_bg = handle_file(person['background'])
+            input_image = Image.open(person_image_path)
+            layer0 = Image.new("L", input_image.size, color=0)
+
 
             new_person_dict = {
                 'background': data_bg,
-                'layers': [data_bg],
+                'layers': [layer0],
                 'composite': data_bg,
-		'id' : person['id']
+		        'id' : person['id']
             }
 
             result = client.predict(
