@@ -5,7 +5,7 @@ from app import app, db, login_manager
 from models import User, Image
 from gradio_client import Client, handle_file
 import os, uuid
-
+from PIL import Image
 
 # Load and store session.
 @login_manager.user_loader
