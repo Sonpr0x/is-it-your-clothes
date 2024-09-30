@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, request, flash, send_file,
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager
-from models import User, Image
+from models import User, Image_db
 from gradio_client import Client, handle_file
 import os, uuid
 from PIL import Image
@@ -80,8 +80,8 @@ def main():
             cloth_image_path = save_image(cloth_image, 'cloth', try_on_option)
 
             # Save metadata (path) to the database
-            person_image_record = Image(user_id=current_user.id, image_type='person', image_path=person_image_path)
-            cloth_image_record = Image(user_id=current_user.id, image_type=try_on_option, image_path=cloth_image_path)
+            person_image_record = Image_db(user_id=current_user.id, image_type='person', image_path=person_image_path)
+            cloth_image_record = Image_db(user_id=current_user.id, image_type=try_on_option, image_path=cloth_image_path)
 
             db.session.add(person_image_record)
             db.session.add(cloth_image_record)
@@ -124,7 +124,7 @@ def main():
 
 
     # Load images of user
-    uploaded_images = Image.query.filter_by(user_id=current_user.id).all()
+    uploaded_images = Image_db.query.filter_by(user_id=current_user.id).all()
 
     return render_template('index.html', images=uploaded_images)
 
@@ -134,7 +134,7 @@ def main():
 @app.route('/image/<int:image_id>')
 @login_required
 def get_image(image_id):
-    image = Image.query.get_or_404(image_id)
+    image = Image_db.query.get_or_404(image_id)
 
     # Block unauthorized
     if image.user_id != current_user.id:
