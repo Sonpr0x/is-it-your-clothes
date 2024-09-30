@@ -158,7 +158,7 @@
             img.addEventListener('click', (event) => {
                 const imageId = event.target.dataset.imageId;
                 if (imageId) {
-                    fetch('/image/click', {
+                    fetch('/image_click', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

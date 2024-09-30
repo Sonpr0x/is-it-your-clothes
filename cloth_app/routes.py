@@ -160,7 +160,7 @@ def get_image(image_id):
         abort(404)
 
 # Reuse image from gallery
-@app.route('/image/click', methods=['POST'])
+@app.route('/image_click', methods=['POST'])
 @login_required
 def image_click():
 
