@@ -26,11 +26,11 @@
             <div class="col-md-8">
                 <h2 class="mb-4">Clothing Showcase</h2>
                 <ul class="nav nav-tabs" id="clothingTabs" role="tablist">
-                    <li class="nav-item" role="presentation"></li>
-                        <button class="nav-link" id="person-tab" data-bs-toggle="tab" data-bs-target="#person" type="button" role="tab" aria-controls="person" aria-selected="true">Person</button>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="person-tab" data-bs-toggle="tab" data-bs-target="#person" type="button" role="tab" aria-controls="person" aria-selected="true">Person</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="clothes-tab" data-bs-toggle="tab" data-bs-target="#clothes" type="button" role="tab" aria-controls="clothes" aria-selected="false">Overall</button>
+                        <button class="nav-link" id="clothes-tab" data-bs-toggle="tab" data-bs-target="#clothes" type="button" role="tab" aria-controls="clothes" aria-selected="false">Overall</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pants-tab" data-bs-toggle="tab" data-bs-target="#pants" type="button" role="tab" aria-controls="pants" aria-selected="false">Upper</button>
@@ -46,7 +46,7 @@
                             {% if image.image_type == 'person' %}
                             <div class="col-md-4 mb-3">
                                 <div class="card">
-                                    <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top" data-image-id="{{ image.id }}">
+                                    <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top" data-image-id="{{ image.id }}" data-image-type="person">
                                 </div>
                             </div>
                             {% endif %}
@@ -56,39 +56,39 @@
                     <div class="tab-pane fade show active" id="clothes" role="tabpanel" aria-labelledby="clothes-tab">
                         <div class="row">
                             {% for image in images %}
-			                {% if image.image_type == 'overall' %}
+                            {% if image.image_type == 'overall' %}
                             <div class="col-md-4 mb-3">
                                 <div class="card">
-                                    <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top" data-image-id="{{ image.id }}">
+                                    <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top" data-image-id="{{ image.id }}" data-image-type="cloth">
                                 </div>
                             </div>
-			                {% endif %}
+                            {% endif %}
                             {% endfor %}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="pants" role="tabpanel" aria-labelledby="pants-tab">
                         <div class="row">
                             {% for image in images %}
-			                {% if image.image_type == 'upper' %}
+                            {% if image.image_type == 'upper' %}
                             <div class="col-md-4 mb-3">
                                 <div class="card">
-                                    <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top" data-image-id="{{ image.id }}">
+                                    <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top" data-image-id="{{ image.id }}" data-image-type="cloth">
                                 </div>
                             </div>
-			                {% endif %}
+                            {% endif %}
                             {% endfor %}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="suits" role="tabpanel" aria-labelledby="suits-tab">
                         <div class="row">
                             {% for image in images %}
-			                {% if image.image_type == 'lower' %}
+                            {% if image.image_type == 'lower' %}
                             <div class="col-md-4 mb-3">
                                 <div class="card">
-                                    <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top" data-image-id="{{ image.id }}">
+                                    <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top" data-image-id="{{ image.id }} " data-image-type="cloth" >
                                 </div>
                             </div>
-			                {% endif %}
+                            {% endif %}
                             {% endfor %}
                         </div>
                     </div>
@@ -190,41 +190,22 @@
         }
     });
 
-    document.querySelectorAll('.card img').forEach((img) => {
-        img.addEventListener('click', async (event) => {
-            const imageId = event.target.dataset.imageId;
-            if (imageId) {
-                try {
-                    const response = await fetch('/image_click', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ image_id: imageId }),
-                    });
 
-                    const data = await response.json();
-                    if (data.person_image_path) {
-                        document.getElementById('person_image_path').value = data.person_image_path;
-                        const personImageResponse = await fetch(data.person_image_path);
-                        const personImageBlob = await personImageResponse.blob();
-                        const personImageUrl = URL.createObjectURL(personImageBlob);
-                        document.getElementById('person_image_preview').src = personImageUrl;
-                        document.getElementById('person_image_preview').classList.remove('d-none');
-                    } else if (data.cloth_image_path) {
-                        document.getElementById('cloth_image_path').value = data.cloth_image_path;
-                        const clothImageResponse = await fetch(data.cloth_image_path);
-                        const clothImageBlob = await clothImageResponse.blob();
-                        const clothImageUrl = URL.createObjectURL(clothImageBlob);
-                        document.getElementById('cloth_image_preview').src = clothImageUrl;
-                        document.getElementById('cloth_image_preview').classList.remove('d-none');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                }
-            }
-        });
+    document.querySelectorAll('.card img').forEach((img) => {
+    img.addEventListener('click', (event) => {
+        const clickedImageSrc = event.target.src;
+        const clickedImageType = event.target.dataset.imageType;
+
+        if (clickedImageType === 'person') {
+            document.getElementById('person_image_preview').src = clickedImageSrc;
+        } else if (clickedImageType === 'cloth') {
+            document.getElementById('cloth_image_preview').src = clickedImageSrc;
+        }
+
+        // Remove the d-none class to make the preview image visible
+        document.getElementById(`${clickedImageType}_image_preview`).classList.remove('d-none');
     });
+});
 </script>   
 
     

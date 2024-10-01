@@ -117,7 +117,7 @@ def main():
 
 
 # Get image api
-@app.route('/image/<int:image_id>')
+@app.route('/image/<int:image_id>', methods=['GET', 'POST'] )
 @login_required
 def get_image(image_id):
     # Query img
@@ -127,29 +127,32 @@ def get_image(image_id):
     if image.user_id != current_user.id:
         abort(403)
 
+    if request.method == 'POST':
+        if image.image_type == 'person':
+            return jsonify({'person_image_path': url_for('get_image', image_id=image.id)})
+        elif image.image_type in ['upper', 'lower', 'overall']:
+            return jsonify({'cloth_image_path': url_for('get_image', image_id=image.id)})
+        else:
+            return jsonify({}), 400
+
     try:
         return send_file(image.image_path)  # Serve the image from its path
     except FileNotFoundError:
         abort(404)
 
 # Reuse image from gallery
-@app.route('/image_click', methods=['POST'])
 @login_required
 def image_click():
-
-    # Query img
     image_id = request.json['image_id']
-    image = Image.query.get_or_404(image_id)
+    image = Image.query.get_or_404("1")
 
-    # Block unauthorized
     if image.user_id != current_user.id:
         abort(403)
 
-    # Check if the image is a person or cloth image
     if image.image_type == 'person':
-        return jsonify({'person_image_path': image.image_path})
+        return jsonify({'person_image_path': url_for('get_image', image_id=image.id)})
     elif image.image_type in ['upper', 'lower', 'overall']:
-        return jsonify({'cloth_image_path': image.image_path})
+        return jsonify({'cloth_image_path': url_for('get_image', image_id=image.id)})
     else:
         return jsonify({}), 400
 
