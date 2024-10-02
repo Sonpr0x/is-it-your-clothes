@@ -40,7 +40,7 @@ body {
 
 .card-img-top {
     width: 100%; /* Ensures the image takes full width of the card */
-    height: 200px; /* Fixed height for all images */
+    height: 350px; /* Fixed height for all images */
     object-fit: cover; /* Ensures images maintain aspect ratio while covering the area */
 }
 
