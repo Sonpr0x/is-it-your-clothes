@@ -143,16 +143,15 @@ def main():
         # img data
         person_image = request.files['person_image']
         cloth_image = request.files['cloth_image']
-
-        # img id
         
 
-        # Query img path
+        # Get obj
         person_image_obj = Image.query.filter_by(id=request.form.get('person_image_id')).first()
         cloth_image_obj = Image.query.filter_by(id=request.form.get('cloth_image_id')).first()
 
+        # Get img path
         person_image_path = person_image_obj.image_path
-        cloth_image_path = person_image_obj.image_path
+        cloth_image_path = cloth_image_obj.image_path
         try_on_option = request.form.get('try_on_option')
 
 
