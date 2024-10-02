@@ -54,7 +54,7 @@ flask shell
 db.create_all()
 ```
 
-### 3. Run webapp server
+### 5. Run webapp server
 
 ```bash
 python app.py
