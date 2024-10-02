@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Virtual Outfit Creator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="index.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='index.css') }}" rel="stylesheet">
 
 </head>
 <body>
@@ -125,90 +125,22 @@
                     <button type="submit" class="btn btn-primary w-100">Generate Virtual Outfit</button>
                 </form>
             
-                <div class="mt-4" id="resultContainer">
-                    <h3>Result</h3>
-                    <img src="" id="resultImage" class="img-fluid d-none" alt="Virtual Outfit Result">
+                <div id="result-container">
+                    <!-- Result image will be displayed here -->
+                </div>
+                <div id="result-layer" style="display: none;">
+                    <div class="card">
+                        <img id="result-image" src="" alt="Result Image">
+                        <button id="close-layer" class="close">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-
-    
-    <script>
-        document.getElementById('imageForm').addEventListener('submit', async function(event) {
-            event.preventDefault();  // Prevent default form submission
-    
-            let formData = new FormData(this);  // Get the form data
-    
-            // Add the hidden input fields to the form data
-            formData.append('person_image_path', document.getElementById('person_image_path').value);
-            formData.append('cloth_image_path', document.getElementById('cloth_image_path').value);
-    
-            // Send the form data asynchronously
-            let response = await fetch('/app', {
-                method: 'POST',
-                body: formData
-            });
-    
-            // If the response is ok, get the image blob and display it
-            if (response.ok) {
-                let blob = await response.blob();
-                let imageUrl = URL.createObjectURL(blob);
-    
-                // Set the image source to the URL created from the blob
-                document.getElementById('resultImage').src = imageUrl;
-                document.getElementById('resultImage').classList.remove('d-none');
-            } else {
-                console.error('Failed to upload and process image');
-            }
-        });
-    </script>
-
-<script>
-    document.getElementById('person_image').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('person_image_preview').src = e.target.result;
-                document.getElementById('person_image_preview').classList.remove('d-none');
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    document.getElementById('cloth_image').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('cloth_image_preview').src = e.target.result;
-                document.getElementById('cloth_image_preview').classList.remove('d-none');
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-
-    document.querySelectorAll('.card img').forEach((img) => {
-    img.addEventListener('click', (event) => {
-        const clickedImageSrc = event.target.src;
-        const clickedImageType = event.target.dataset.imageType;
-
-        if (clickedImageType === 'person') {
-            document.getElementById('person_image_preview').src = clickedImageSrc;
-        } else if (clickedImageType === 'cloth') {
-            document.getElementById('cloth_image_preview').src = clickedImageSrc;
-        }
-
-        // Remove the d-none class to make the preview image visible
-        document.getElementById(`${clickedImageType}_image_preview`).classList.remove('d-none');
-    });
-});
-</script>   
-
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
 </body>
 </html>

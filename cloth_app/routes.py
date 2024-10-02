@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager
 from models import User, Image
 from gradio_client import Client, handle_file
-import os, uuid
+import os, uuid, base64
 from PIL import Image as Image_process
 
 # Load and store session.
@@ -34,7 +34,7 @@ def register():
         
         # Hash and create user.
         hashed_password = generate_password_hash(password)
-        new_user = User(username=username, password=hashed_password)
+        new_user = User(username=username, password=hashed_password, admin=False)
         db.session.add(new_user)
         db.session.commit()
         flash('Registration successful!')
@@ -82,32 +82,42 @@ def main():
         cloth_image_path = request.form.get('cloth_image_path')
         try_on_option = request.form.get('try_on_option')
 
-        # Check if the files have valid names and extensions
-        if cloth_image and allowed_file(cloth_image.filename) and person_image and allowed_file(person_image.filename):
+
+
+        # Save and process image
+        if allowed_file(cloth_image.filename) and allowed_file(person_image.filename):
             
-            
-            # Save the images to local storage
             person_image_path = save_image(person_image, 'person')
             cloth_image_path = save_image(cloth_image, 'cloth', try_on_option)
 
-            # Save metadata (path) to the database
-            person_image_record = Image(user_id=current_user.id, image_type='person', image_path=person_image_path)
-            cloth_image_record = Image(user_id=current_user.id, image_type=try_on_option, image_path=cloth_image_path)
+            create_image_record(person_image_path)
+            create_image_record(cloth_image_path, try_on_option)
 
-            db.session.add(person_image_record)
-            db.session.add(cloth_image_record)
-            db.session.commit()
-            flash('Images uploaded successfully!')
-
-            result = image_process(person_image_path, cloth_image_path, try_on_option)
-
-            return send_file(result, mimetype='image/jpeg')
+            image_path = image_process(person_image_path, cloth_image_path, try_on_option)
+            result = Image_process(image_path)
+            return jsonify({'result': base64.b64encode(result).decode('utf-8')})
 
         elif person_image_path and cloth_image_path:
+            image_path = image_process(person_image_path, cloth_image_path, try_on_option)
+            result = Image_process(image_path)
+            return jsonify({'result': base64.b64encode(result).decode('utf-8')})
+        
+        elif person_image_path and allowed_file(cloth_image.filename):
+            cloth_image_path = save_image(cloth_image, 'cloth', try_on_option)
+            create_image_record(cloth_image_path, try_on_option)
 
-            result = image_process(person_image_path, cloth_image_path, try_on_option)
+            image_path = image_process(person_image_path, cloth_image_path, try_on_option)
+            result = Image_process(image_path)
+            return jsonify({'result': base64.b64encode(result).decode('utf-8')})
+        
+        elif allowed_file(person_image.filename) and cloth_image_path:
+            person_image_path = save_image(person_image, 'person')
+            create_image_record(person_image_path)
 
-            return send_file(result, mimetype='image/jpeg')
+            image_path = image_process(person_image_path, cloth_image_path, try_on_option)
+            result = Image_process(image_path)
+            return jsonify({'result': base64.b64encode(result).decode('utf-8')})
+        
 
 
     # Load images of user
@@ -116,7 +126,7 @@ def main():
     return render_template('index.html', images=uploaded_images)
 
 
-# Get image api
+# Get image
 @app.route('/image/<int:image_id>', methods=['GET', 'POST'] )
 @login_required
 def get_image(image_id):
@@ -140,24 +150,8 @@ def get_image(image_id):
     except FileNotFoundError:
         abort(404)
 
-# Reuse image from gallery
-@login_required
-def image_click():
-    image_id = request.json['image_id']
-    image = Image.query.get_or_404("1")
 
-    if image.user_id != current_user.id:
-        abort(403)
-
-    if image.image_type == 'person':
-        return jsonify({'person_image_path': url_for('get_image', image_id=image.id)})
-    elif image.image_type in ['upper', 'lower', 'overall']:
-        return jsonify({'cloth_image_path': url_for('get_image', image_id=image.id)})
-    else:
-        return jsonify({}), 400
-
-
-### Addtional functions
+### Image functions
 def save_image(image, image_type, try_on_option=None):
     
     # Set default path to save image.
@@ -181,40 +175,29 @@ def save_image(image, image_type, try_on_option=None):
     image.save(image_path)
     return image_path
 
-
+# Check allow extension file
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def image_process(person_image_path, cloth_image_path, try_on_option):
-     # Init api
-        client = Client("zhengchong/CatVTON")
-
-        person = client.predict(
-            image_path=handle_file(person_image_path),
-            api_name="/person_example_fn"
-        )
-
-        # background img
-        data_bg = handle_file(person['background'])
 
         # Create mask
         input_image = Image_process.open(person_image_path)
         layer0 = Image_process.new("L", input_image.size, color=0)
 
-        mask_folder = os.path.join('uploads', str(current_user.id), "temp_mask.png")
-        layer0.save(mask_folder)
+        mask = os.path.join('uploads', str(current_user.id), "temp_mask.png")
+        layer0.save(mask)
 
-        # Create new dict
-
+        # Handle data type for api
         new_person_dict = {
-            'background': data_bg,
-            'layers': [handle_file(mask_folder)],
-            'composite': data_bg,
-            'id' : person['id']
+            'background': handle_file(person_image_path),
+            'layers': [handle_file(mask)],
+            'composite': handle_file(person_image_path)
         }
 
         # Call api
+        client = Client("zhengchong/CatVTON")
 
         result = client.predict(
             person_image=new_person_dict,
@@ -227,4 +210,23 @@ def image_process(person_image_path, cloth_image_path, try_on_option):
             api_name="/submit_function"
         )
 
+        # Remove mask data
+        os.remove(mask)
+
         return result
+
+def create_image_record(img_path, try_on_option=None):
+    if ('person' in img_path):
+        person_image_record = Image(user_id=current_user.id, image_type='person', image_path=img_path)
+        db.session.add(person_image_record)
+
+    else:
+        cloth_image_record = Image(user_id=current_user.id, image_type=try_on_option, image_path=img_path)
+        db.session.add(cloth_image_record)
+    
+    
+    db.session.commit()
+
+
+
+        
