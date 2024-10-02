@@ -47,6 +47,7 @@
                             <div class="col-md-4 mb-3">
                                 <div class="card">
                                     <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top" data-image-id="{{ image.id }}" data-image-type="person">
+                                    <button class="close-btn btn btn-danger btn-sm" onclick="deleteImage({{ image.id }})">x</button>
                                 </div>
                             </div>
                             {% endif %}
@@ -60,6 +61,7 @@
                             <div class="col-md-4 mb-3">
                                 <div class="card">
                                     <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top" data-image-id="{{ image.id }}" data-image-type="cloth">
+                                    <button class="close-btn btn btn-danger btn-sm" onclick="deleteImage({{ image.id }})">x</button>
                                 </div>
                             </div>
                             {% endif %}
@@ -73,6 +75,7 @@
                             <div class="col-md-4 mb-3">
                                 <div class="card">
                                     <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top" data-image-id="{{ image.id }}" data-image-type="cloth">
+                                    <button class="close-btn btn btn-danger btn-sm" onclick="deleteImage({{ image.id }})">x</button>
                                 </div>
                             </div>
                             {% endif %}
@@ -86,6 +89,7 @@
                             <div class="col-md-4 mb-3">
                                 <div class="card">
                                     <img src="{{ url_for('get_image', image_id=image.id) }}" class="card-img-top" data-image-id="{{ image.id }} " data-image-type="cloth" >
+                                    <button class="close-btn btn btn-danger btn-sm" onclick="deleteImage({{ image.id }})">x</button>
                                 </div>
                             </div>
                             {% endif %}

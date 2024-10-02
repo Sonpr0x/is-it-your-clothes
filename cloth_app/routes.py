@@ -143,7 +143,31 @@ def get_image(image_id):
         abort(404)
 
 
-### Image functions
+@app.route('/delete_image/<int:image_id>', methods=['POST'])
+@login_required
+def delete_image(image_id):
+    image = Image.query.get_or_404(image_id)
+
+    # Ensure the current user owns the image
+    if image.user_id != current_user.id:
+        abort(403)
+
+    # Delete the image file from the local storage
+    try:
+        os.remove(image.image_path)
+    except FileNotFoundError:
+        pass  # If the file is already deleted, we can ignore the error
+
+    # Delete the image record from the database
+    db.session.delete(image)
+    db.session.commit()
+
+    return jsonify({'success': True})
+
+
+######### Image functions ##########
+
+
 def save_image(image, image_type, try_on_option=None):
     
     # Set default path to save image.
@@ -189,7 +213,7 @@ def image_process(person_image_path, cloth_image_path, try_on_option):
         }
 
         # Call api
-        client = Client("zhengchong/CatVTON")
+        client = Client("http://120.76.142.206:8888/")
 
         result = client.predict(
             person_image=new_person_dict,
@@ -203,7 +227,9 @@ def image_process(person_image_path, cloth_image_path, try_on_option):
         )
 
         # Remove mask data
-        os.remove(mask)
+        # os.remove(mask)
+
+        print(result)
 
         return result
 

@@ -76,9 +76,35 @@ $(document).ready(function() {
             // Remove the d-none class to make the preview image visible
             document.getElementById(`${clickedImageType}_image_preview`).classList.remove('d-none');
         });
+
+        
+
     });
 
     });
+
+    // Delete image
+    function deleteImage(imageId) {
+        $.ajax({
+            type: 'POST',
+            url: `/delete_image/${imageId}`,
+            success: function(response) {
+                if (response.success) {
+                    $(`.image-card[data-image-id=${imageId}]`).remove();
+
+                    window.location.href = '/app';
+                } else {
+                    alert('Failed to delete the image.');
+                }
+            },
+            error: function() {
+                alert('Error occurred while deleting the image.');
+            }
+        });
+
+    }
+
+    
 
 
 
