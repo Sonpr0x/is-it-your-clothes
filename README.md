@@ -38,6 +38,22 @@ Run the following command to install the required dependencies:
 ```bash
 pip install -r requirements.txt
 ```
+### 3. Create database config
+
+```python
+class Config:
+  SECRET_KEY = os.environ.get('SECRET_KEY') or 'nothing'
+  SQLALCHEMY_DATABASE_URI = 'mysql://<username>:<password>@localhost/<database_name>'
+  SQLALCHEMY_TRACK_MODIFICATIONS = False
+```
+
+### 4. Create table
+
+```bash
+flask shell
+db.create_all()
+```
+
 ### 3. Run webapp server
 
 ```bash
@@ -47,3 +63,10 @@ python app.py
 Default host on http://localhost:5000
 
 ## Acknowledgements
+
+## Update
+
+- [ ] Adjust gallery UI
+- [ ] Filter input
+- [ ] 2auth
+- [ ] Clean code
