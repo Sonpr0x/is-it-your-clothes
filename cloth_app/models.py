@@ -3,7 +3,7 @@ from flask_login import UserMixin
 
 class User(UserMixin, db.Model): 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), unique=True, nullable=False)
+    username = db.Column(db.String(40), unique=True, nullable=False)
     password = db.Column(db.String(300), nullable=False)
     images = db.relationship('Image', backref='user', lazy=True)
     admin = db.Column(db.Boolean, nullable=False)
@@ -11,5 +11,5 @@ class User(UserMixin, db.Model):
 class Image(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    image_type = db.Column(db.String(50), nullable=False)  # person/cloth
-    image_path = db.Column(db.String(300), nullable=False)
+    image_type = db.Column(db.String(10), nullable=False)  # person/cloth
+    image_path = db.Column(db.String(100), nullable=False)
