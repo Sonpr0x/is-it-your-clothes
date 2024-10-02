@@ -129,18 +129,22 @@
                     <button type="submit" class="btn btn-primary w-100">Generate Virtual Outfit</button>
                 </form>
             
-                <div id="result-container">
-                    <!-- Result image will be displayed here -->
-                </div>
-                <div id="result-layer" style="display: none;">
-                    <div class="card">
-                        <img id="result-image" src="" alt="Result Image">
-                        <button id="close-layer" class="close">Close</button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
+
+  
+
+<div class="modal" tabindex="-1" id="resultModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <img src="" class="img-fluid" id="result-image" alt="result-image">
+            </div>
+        </div>
+    </div>
+</div>
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='index.js') }}"></script>

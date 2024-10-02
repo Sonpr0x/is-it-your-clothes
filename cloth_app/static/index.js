@@ -16,7 +16,7 @@ $(document).ready(function() {
             contentType: false,
             success: function(result) {
                 // Show the result layer and display the image
-                $('#result-layer').show();
+                $('#resultModal').style.display = 'block';
                 $('#result-image').attr('src', 'data:image/jpeg;base64,' + result);
             }
         });
@@ -104,6 +104,7 @@ $(document).ready(function() {
 
     }
 
+    
     
 
 

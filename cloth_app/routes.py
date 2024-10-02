@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager
 from models import User, Image
 from gradio_client import Client, handle_file
-import os, uuid, base64
+import os, uuid, base64, dump
 from PIL import Image as Image_process
 
 # Load and store session.
@@ -12,6 +12,71 @@ from PIL import Image as Image_process
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
+############ Admin route ##############
+
+# Admin login
+@app.route('/admin', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User.query.filter_by(username=username, admin=True).first()
+        if user and check_password_hash(user.password, password):
+            login_user(user)
+            return redirect(url_for('admin_dashboard'))
+        flash('Invalid admin login credentials!')
+    return render_template('admin.html')
+
+# Admin dashboard
+@app.route('/admin/dashboard')
+@login_required
+def admin_dashboard():
+    if not current_user.admin:
+        abort(403)
+    
+    users = User.query.all()
+    return render_template('admin_dashboard.html', users=users)
+
+
+# Create user
+@app.route('/create_user', methods=['POST'])
+@login_required
+def create_user():
+    if not current_user.admin:
+        abort(403)
+    
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    existing_user = User.query.filter_by(username=username).first()
+    if existing_user:
+        return jsonify({'success': False, 'message': 'Username already exists.'})
+
+    hashed_password = generate_password_hash(password)
+    new_user = User(username=username, password=hashed_password, admin=False)
+    db.session.add(new_user)
+    db.session.commit()
+
+
+    return jsonify({'success': True})
+
+# Delete user
+@app.route('/delete_user', methods=['POST'])
+@login_required
+def delete_user():
+    if not current_user.admin:
+        abort(403)
+    
+    username = request.form.get('username')
+    user = User.query.filter_by(username=username).first()
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'message': 'User  not found.'})
+
+############# User and app route ##############
 
 # Route root to login page
 @app.route('/')
@@ -78,8 +143,15 @@ def main():
         cloth_image = request.files['cloth_image']
 
         # img path
-        person_image_path = Image.query.get(int(request.form.get('person_image_id'))).image_path
-        cloth_image_path = Image.query.get(int(request.form.get('cloth_image_id'))).image_path
+        person_image_id = request.form.get('person_image_id')
+        cloth_image_id = request.form.get('cloth_image_id')
+
+        print(person_image_id)
+        print(cloth_image_id)
+
+
+        person_image_path = db.session.query(Image.image_path).filter(Image.id == person_image_id).scalar()
+        cloth_image_path = db.session.query(Image.image_path).filter(Image.id == cloth_image_id).scalar()
         try_on_option = request.form.get('try_on_option')
 
 
@@ -229,7 +301,8 @@ def image_process(person_image_path, cloth_image_path, try_on_option):
         # Remove mask data
         # os.remove(mask)
 
-        print(result)
+        dump()
+        dump(result)
 
         return result
 
