@@ -146,10 +146,6 @@ def main():
         person_image_id = request.form.get('person_image_id')
         cloth_image_id = request.form.get('cloth_image_id')
 
-        print(person_image_id)
-        print(cloth_image_id)
-
-
         person_image_path = db.session.query(Image.image_path).filter(Image.id == person_image_id).scalar()
         cloth_image_path = db.session.query(Image.image_path).filter(Image.id == cloth_image_id).scalar()
         try_on_option = request.form.get('try_on_option')
@@ -166,12 +162,13 @@ def main():
             create_image_record(cloth_image_path, try_on_option)
 
             image_path = image_process(person_image_path, cloth_image_path, try_on_option)
-            result = Image_process(image_path)
+            
+            result = Image_process.open(image_path)
             return jsonify({'result': base64.b64encode(result).decode('utf-8')})
 
         elif person_image_path and cloth_image_path:
             image_path = image_process(person_image_path, cloth_image_path, try_on_option)
-            result = Image_process(image_path)
+            result = Image_process.open(image_path)
             return jsonify({'result': base64.b64encode(result).decode('utf-8')})
         
         elif person_image_path and allowed_file(cloth_image.filename):
@@ -179,7 +176,7 @@ def main():
             create_image_record(cloth_image_path, try_on_option)
 
             image_path = image_process(person_image_path, cloth_image_path, try_on_option)
-            result = Image_process(image_path)
+            result = Image_process.open(image_path)
             return jsonify({'result': base64.b64encode(result).decode('utf-8')})
         
         elif allowed_file(person_image.filename) and cloth_image_path:
@@ -187,7 +184,7 @@ def main():
             create_image_record(person_image_path)
 
             image_path = image_process(person_image_path, cloth_image_path, try_on_option)
-            result = Image_process(image_path)
+            result = Image_process.open(image_path)
             return jsonify({'result': base64.b64encode(result).decode('utf-8')})
         
 
@@ -285,7 +282,7 @@ def image_process(person_image_path, cloth_image_path, try_on_option):
         }
 
         # Call api
-        client = Client("http://120.76.142.206:8888/")
+        client = Client("zhengchong/CatVTON")
 
         result = client.predict(
             person_image=new_person_dict,
@@ -299,10 +296,9 @@ def image_process(person_image_path, cloth_image_path, try_on_option):
         )
 
         # Remove mask data
-        # os.remove(mask)
+        os.remove(mask)
 
-        dump()
-        dump(result)
+        print(result)
 
         return result
 

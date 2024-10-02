@@ -8,6 +8,9 @@ $(document).ready(function() {
         event.preventDefault();
         var formData = new FormData(this);
 
+        const resultModal = document.getElementById('resultModal');
+        const resultImage = document.getElementById('result-image');
+
         $.ajax({
             type: 'POST',
             url: '/app',
@@ -16,9 +19,10 @@ $(document).ready(function() {
             contentType: false,
             success: function(result) {
                 // Show the result layer and display the image
-                $('#resultModal').style.display = 'block';
-                $('#result-image').attr('src', 'data:image/jpeg;base64,' + result);
-            }
+                resultModal.style.display = 'block';
+                resultModal.classList.add('show');
+                resultImage.attr('src', 'data:image/jpeg;base64,' + result);
+            } 
         });
     });
 
