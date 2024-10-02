@@ -145,12 +145,14 @@ def main():
         cloth_image = request.files['cloth_image']
 
         # img id
-        person_image_id = request.form.get('person_image_id')
-        cloth_image_id = request.form.get('cloth_image_id')
+        
 
         # Query img path
-        person_image_path = Image.query.filter_by(id == person_image_id).first()
-        cloth_image_path = Image.query.filter_by(id == cloth_image_id).first()
+        person_image_obj = Image.query.filter_by(id=request.form.get('person_image_id')).first()
+        cloth_image_obj = Image.query.filter_by(id=request.form.get('cloth_image_id')).first()
+
+        person_image_path = person_image_obj.image_path
+        cloth_image_path = person_image_obj.image_path
         try_on_option = request.form.get('try_on_option')
 
 
@@ -170,6 +172,8 @@ def main():
             return jsonify({'result': base64.b64encode(result).decode('utf-8')})
 
         elif person_image_path and cloth_image_path:
+            print(person_image_path)
+            print(cloth_image_path)
             image_path = image_process(person_image_path, cloth_image_path, try_on_option)
             result = Image_process.open(image_path)
             return jsonify({'result': base64.b64encode(result).decode('utf-8')})
@@ -228,7 +232,7 @@ def delete_image(image_id):
     try:
         os.remove(image.image_path)
     except FileNotFoundError:
-        pass  # If the file is already deleted, we can ignore the error
+        pass 
 
     # Delete the image record from the database
     db.session.delete(image)
