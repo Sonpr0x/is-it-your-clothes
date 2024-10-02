@@ -36,7 +36,7 @@ $(document).ready(function() {
             reader.onload = function(e) {
                 document.getElementById('person_image_preview').src = e.target.result;
                 document.getElementById('person_image_preview').classList.remove('d-none');
-                document.getElementById('person_image_path').value = ''; 
+                document.getElementById('person_image_id').value = ''; 
             };
             reader.readAsDataURL(file);
         }
@@ -49,7 +49,7 @@ $(document).ready(function() {
             reader.onload = function(e) {
                 document.getElementById('cloth_image_preview').src = e.target.result;
                 document.getElementById('cloth_image_preview').classList.remove('d-none');
-                document.getElementById('cloth_image_path').value = '';
+                document.getElementById('cloth_image_id').value = '';
             };
             reader.readAsDataURL(file);
         }
@@ -61,14 +61,15 @@ $(document).ready(function() {
         img.addEventListener('click', (event) => {
             const clickedImageSrc = event.target.src;
             const clickedImageType = event.target.dataset.imageType;
+            const clickedImageId = event.target.dataset.imageId;
 
             if (clickedImageType === 'person') {
                 document.getElementById('person_image_preview').src = clickedImageSrc;
-                document.getElementById('person_image_path').value = clickedImageSrc;
+                document.getElementById('person_image_id').value = clickedImageId;
                 document.getElementById('person_image').value = '';
             } else if (clickedImageType === 'cloth') {
                 document.getElementById('cloth_image_preview').src = clickedImageSrc;
-                document.getElementById('cloth_image_path').value = clickedImageSrc; // Set the hidden input value
+                document.getElementById('cloth_image_id').value = clickedImageId; // Set the hidden input value
                 document.getElementById('cloth_image').value = '';
             }
 

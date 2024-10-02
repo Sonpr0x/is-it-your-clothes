@@ -78,8 +78,8 @@ def main():
         cloth_image = request.files['cloth_image']
 
         # img path
-        person_image_path = request.form.get('person_image_path')
-        cloth_image_path = request.form.get('cloth_image_path')
+        person_image_path = Image.query.get(int(request.form.get('person_image_id'))).image_path
+        cloth_image_path = Image.query.get(int(request.form.get('cloth_image_id'))).image_path
         try_on_option = request.form.get('try_on_option')
 
 
@@ -127,7 +127,7 @@ def main():
 
 
 # Get image
-@app.route('/image/<int:image_id>', methods=['GET', 'POST'] )
+@app.route('/image/<int:image_id>')
 @login_required
 def get_image(image_id):
     # Query img
@@ -136,14 +136,6 @@ def get_image(image_id):
     # Block unauthorized
     if image.user_id != current_user.id:
         abort(403)
-
-    if request.method == 'POST':
-        if image.image_type == 'person':
-            return jsonify({'person_image_path': url_for('get_image', image_id=image.id)})
-        elif image.image_type in ['upper', 'lower', 'overall']:
-            return jsonify({'cloth_image_path': url_for('get_image', image_id=image.id)})
-        else:
-            return jsonify({}), 400
 
     try:
         return send_file(image.image_path)  # Serve the image from its path
