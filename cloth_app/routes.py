@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager
 from models import User, Image
 from gradio_client import Client, handle_file
-import os, uuid, base64, dump
+import os, uuid, base64
 from PIL import Image as Image_process
 
 # Load and store session.
@@ -76,7 +76,9 @@ def delete_user():
         return jsonify({'success': True})
     return jsonify({'success': False, 'message': 'User  not found.'})
 
+
 ############# User and app route ##############
+
 
 # Route root to login page
 @app.route('/')
@@ -142,12 +144,13 @@ def main():
         person_image = request.files['person_image']
         cloth_image = request.files['cloth_image']
 
-        # img path
+        # img id
         person_image_id = request.form.get('person_image_id')
         cloth_image_id = request.form.get('cloth_image_id')
 
-        person_image_path = db.session.query(Image.image_path).filter(Image.id == person_image_id).scalar()
-        cloth_image_path = db.session.query(Image.image_path).filter(Image.id == cloth_image_id).scalar()
+        # Query img path
+        person_image_path = Image.query.filter_by(id == person_image_id).first()
+        cloth_image_path = Image.query.filter_by(id == cloth_image_id).first()
         try_on_option = request.form.get('try_on_option')
 
 
