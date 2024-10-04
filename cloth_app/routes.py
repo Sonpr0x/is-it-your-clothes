@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager
 from models import User, Image
 from gradio_client import Client, handle_file
-import os, uuid, base64
+import os, uuid, base64, io
 from PIL import Image as Image_process
 
 # Load and store session.
@@ -133,9 +133,19 @@ def logout():
 
 
 # Main
-@app.route('/app', methods=['GET', 'POST'])
+@app.route('/app')
 @login_required
 def main():
+
+    # Load images of user
+    uploaded_images = Image.query.filter_by(user_id=current_user.id).all()
+
+    return render_template('index.html', images=uploaded_images)
+
+# Try-on function
+@app.route('/process', methods=['POST'])
+@login_required
+def process():
 
     # Process images
     if request.method == 'POST':
@@ -168,14 +178,14 @@ def main():
             image_path = image_process(person_image_path, cloth_image_path, try_on_option)
             
             result = Image_process.open(image_path)
-            return jsonify({'result': base64.b64encode(result).decode('utf-8')})
+            return image_to_base64(result)
 
         elif person_image_path and cloth_image_path:
             print(person_image_path)
             print(cloth_image_path)
             image_path = image_process(person_image_path, cloth_image_path, try_on_option)
             result = Image_process.open(image_path)
-            return jsonify({'result': base64.b64encode(result).decode('utf-8')})
+            return image_to_base64(result)
         
         elif person_image_path and allowed_file(cloth_image.filename):
             cloth_image_path = save_image(cloth_image, 'cloth', try_on_option)
@@ -183,7 +193,7 @@ def main():
 
             image_path = image_process(person_image_path, cloth_image_path, try_on_option)
             result = Image_process.open(image_path)
-            return jsonify({'result': base64.b64encode(result).decode('utf-8')})
+            return image_to_base64(result)
         
         elif allowed_file(person_image.filename) and cloth_image_path:
             person_image_path = save_image(person_image, 'person')
@@ -191,14 +201,7 @@ def main():
 
             image_path = image_process(person_image_path, cloth_image_path, try_on_option)
             result = Image_process.open(image_path)
-            return jsonify({'result': base64.b64encode(result).decode('utf-8')})
-        
-
-
-    # Load images of user
-    uploaded_images = Image.query.filter_by(user_id=current_user.id).all()
-
-    return render_template('index.html', images=uploaded_images)
+            return image_to_base64(result)
 
 
 # Get image
@@ -317,9 +320,18 @@ def create_image_record(img_path, try_on_option=None):
         cloth_image_record = Image(user_id=current_user.id, image_type=try_on_option, image_path=img_path)
         db.session.add(cloth_image_record)
     
-    
     db.session.commit()
 
+def image_to_base64(image):
+    """
+    Convert a PIL Image to a base64-encoded string.
 
+    :param image: PIL Image object
+    :return: Base64-encoded string
+    """
+    img_byte_arr = io.BytesIO()
+    image.save(img_byte_arr, format='PNG')
+    img_byte_arr = img_byte_arr.getvalue()
+    return base64.b64encode(img_byte_arr).decode('utf-8')
 
         

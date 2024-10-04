@@ -7,7 +7,7 @@ $(document).ready(function() {
 
 
     // Trigger event submit to show result
-    $('#image-form').submit(function(event) {
+    $('#imageForm').submit(function(event) {
         event.preventDefault();
         var formData = new FormData(this);
 
@@ -18,7 +18,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: 'POST',
-            url: '/app',
+            url: '/process',
             data: formData,
             processData: false,
             contentType: false,
