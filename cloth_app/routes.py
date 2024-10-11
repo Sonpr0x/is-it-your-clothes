@@ -154,14 +154,21 @@ def process():
         person_image = request.files['person_image']
         cloth_image = request.files['cloth_image']
         
+        person_image_id = request.form.get('person_image_id')
+        cloth_image_id = request.form.get('cloth_image_id')
 
         # Get obj
-        person_image_obj = Image.query.filter_by(id=request.form.get('person_image_id')).first()
-        cloth_image_obj = Image.query.filter_by(id=request.form.get('cloth_image_id')).first()
+        if person_image_id:
+            person_image_obj = Image.query.filter_by(id=person_image_id).first()
+            person_image_path = person_image_obj.image_path
+            print(person_image_path)
+        
+        if cloth_image_id:
+            cloth_image_obj = Image.query.filter_by(id=cloth_image_id).first()
+            cloth_image_path = cloth_image_obj.image_path
+            print(cloth_image_path)
 
         # Get img path
-        person_image_path = person_image_obj.image_path
-        cloth_image_path = cloth_image_obj.image_path
         try_on_option = request.form.get('try_on_option')
 
 
